@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://by52ir41j3hwt"]
+
+[ext_resource type="PackedScene" uid="uid://12b1fmrarnr6" path="res://Maps/Hall/Models/Hall.glb" id="1_sm620"]
+
+[node name="Node3D" type="Node3D" unique_id=1358751029]
+
+[node name="Hall" parent="." unique_id=1517047227 instance=ExtResource("1_sm620")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1446519, 0.68333244, 39.041103)
