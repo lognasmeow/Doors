@@ -1,8 +1,94 @@
 [gd_scene format=3 uid="uid://by52ir41j3hwt"]
 
-[ext_resource type="PackedScene" uid="uid://12b1fmrarnr6" path="res://Maps/Hall/Models/Hall.glb" id="1_sm620"]
+[ext_resource type="PackedScene" uid="uid://dkml2o44cwqtm" path="res://Lighting/LightBulb/LightBulb.tscn" id="1_7a1c7"]
+[ext_resource type="PackedScene" uid="uid://d18vf8p7c7u1q" path="res://Maps/Hall/Models/hall.tscn" id="1_sm620"]
+[ext_resource type="LightmapGIData" uid="uid://cioge3sm2sx3e" path="res://Maps/Hall/MapHall.lmbake" id="3_hmkmw"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sm620"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_7a1c7"]
+sky_material = SubResource("ProceduralSkyMaterial_sm620")
+
+[sub_resource type="Environment" id="Environment_hmkmw"]
+background_mode = 1
+sky = SubResource("Sky_7a1c7")
+tonemap_mode = 2
+ssao_enabled = true
+ssao_intensity = 7.69
+glow_enabled = true
+glow_levels/2 = 1.0
+glow_levels/4 = 0.5
+glow_levels/5 = 0.2
+glow_intensity = 0.61
+glow_bloom = 0.15
+fog_depth_begin = 0.0
+fog_depth_end = 15.0
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.08
+volumetric_fog_albedo = Color(0.8346143, 0.8346143, 0.8346143, 1)
+adjustment_enabled = true
 
 [node name="Node3D" type="Node3D" unique_id=1358751029]
 
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1437628421]
+environment = SubResource("Environment_hmkmw")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1719266925]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
+light_energy = 0.0
+shadow_enabled = true
+
+[node name="Lighting" type="Node3D" parent="." unique_id=116918586]
+
+[node name="OmniLight3D" parent="Lighting" unique_id=350247279 instance=ExtResource("1_7a1c7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.55719924, -0.023430593, -80.066536)
+
+[node name="OmniLight3D13" parent="Lighting" unique_id=1148430996 instance=ExtResource("1_7a1c7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9933815, 0.3812766, -85.98179)
+
+[node name="OmniLight3D3" parent="Lighting" unique_id=922093201 instance=ExtResource("1_7a1c7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.55719924, -0.023430593, -65.88229)
+
+[node name="OmniLight3D4" parent="Lighting" unique_id=1770624368 instance=ExtResource("1_7a1c7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.55719924, -0.023430593, -51.6877)
+
+[node name="OmniLight3D5" parent="Lighting" unique_id=1425911423 instance=ExtResource("1_7a1c7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.55719924, -0.023430593, -37.48561)
+
+[node name="OmniLight3D6" parent="Lighting" unique_id=1088503865 instance=ExtResource("1_7a1c7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.55719924, -0.023430593, -23.286947)
+
+[node name="OmniLight3D7" parent="Lighting" unique_id=1165662929 instance=ExtResource("1_7a1c7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.55719924, -0.023430593, -9.084408)
+
+[node name="OmniLight3D8" parent="Lighting" unique_id=144431309 instance=ExtResource("1_7a1c7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5489874, -0.023430593, -65.88229)
+
+[node name="OmniLight3D9" parent="Lighting" unique_id=913719607 instance=ExtResource("1_7a1c7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5489874, -0.023430593, -51.6877)
+
+[node name="OmniLight3D10" parent="Lighting" unique_id=1519361961 instance=ExtResource("1_7a1c7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5489874, -0.023430593, -37.48561)
+
+[node name="OmniLight3D11" parent="Lighting" unique_id=1065892982 instance=ExtResource("1_7a1c7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5489874, -0.023430593, -23.286947)
+
+[node name="OmniLight3D12" parent="Lighting" unique_id=1396271937 instance=ExtResource("1_7a1c7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5489874, -0.023430593, -9.084408)
+
+[node name="OmniLight3D2" parent="Lighting" unique_id=718593043 instance=ExtResource("1_7a1c7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5462776, -0.023430593, -80.066536)
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Lighting" unique_id=744558309]
+transform = Transform3D(-1, 1.0873268e-07, 0, 4.7528565e-15, 4.371139e-08, 1, 1.0873268e-07, 1, -4.371139e-08, -1.0684768, 1.1905605, 2.0745792)
+light_color = Color(0.6743888, 0.6743912, 0.6789077, 1)
+
 [node name="Hall" parent="." unique_id=1517047227 instance=ExtResource("1_sm620")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1446519, 0.68333244, 39.041103)
+
+[node name="LightmapGI" type="LightmapGI" parent="." unique_id=1395356945]
+quality = 2
+supersampling = true
+generate_probes_subdiv = 4
+light_data = ExtResource("3_hmkmw")

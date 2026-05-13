@@ -1,0 +1,4 @@
+[gd_scene format=3 uid="uid://dkml2o44cwqtm"]
+
+[node name="OmniLight3D" type="OmniLight3D" unique_id=350247279]
+light_color = Color(0.32881874, 0.32881862, 0.33243135, 1)
