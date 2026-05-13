@@ -3,6 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://dkml2o44cwqtm" path="res://Lighting/LightBulb/LightBulb.tscn" id="1_7a1c7"]
 [ext_resource type="PackedScene" uid="uid://d18vf8p7c7u1q" path="res://Maps/Hall/Models/hall.tscn" id="1_sm620"]
 [ext_resource type="LightmapGIData" uid="uid://cioge3sm2sx3e" path="res://Maps/Hall/MapHall.lmbake" id="3_hmkmw"]
+[ext_resource type="PackedScene" uid="uid://3vgkium50w67" path="res://Player/player.tscn" id="4_cjpbw"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sm620"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -92,3 +93,6 @@ quality = 2
 supersampling = true
 generate_probes_subdiv = 4
 light_data = ExtResource("3_hmkmw")
+
+[node name="Player" parent="." unique_id=1754934297 instance=ExtResource("4_cjpbw")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -0.9738519, -0.4371106, -83.914566)
