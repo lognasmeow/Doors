@@ -1,10 +1,23 @@
 [gd_scene format=3 uid="uid://3vgkium50w67"]
 
 [ext_resource type="Script" uid="uid://bnt0jwxox2gkf" path="res://Player/player.gd" id="1_l8h54"]
+[ext_resource type="Shader" uid="uid://cf543q665btgc" path="res://Shaders/vhs.gdshader" id="2_4ntmi"]
+[ext_resource type="Shader" uid="uid://bmpe4lx6c18m3" path="res://Shaders/vhs2.gdshader" id="3_btcbx"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hvfyp"]
 radius = 0.2
 height = 1.8
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_btcbx"]
+shader = ExtResource("2_4ntmi")
+shader_parameter/quality = 8
+shader_parameter/block_size = 8
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gwnis"]
+shader = ExtResource("3_btcbx")
+shader_parameter/virtual_resolution = Vector2(640, 480)
+shader_parameter/grid_strength = 0.15
+shader_parameter/grid_scale = 1.0
 
 [node name="Player" type="CharacterBody3D" unique_id=1754934297]
 script = ExtResource("1_l8h54")
@@ -14,3 +27,20 @@ shape = SubResource("CapsuleShape3D_hvfyp")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1142617947]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.47149712, -0.4037943)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1504478026]
+visible = false
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=1732864954]
+material = SubResource("ShaderMaterial_btcbx")
+offset_right = 1440.0
+offset_bottom = 1080.0
+mouse_filter = 2
+
+[node name="CanvasLayer2" type="CanvasLayer" parent="." unique_id=1259053874]
+
+[node name="ColorRect2" type="ColorRect" parent="CanvasLayer2" unique_id=798288931]
+material = SubResource("ShaderMaterial_gwnis")
+offset_right = 1440.0
+offset_bottom = 1080.0
+mouse_filter = 2
