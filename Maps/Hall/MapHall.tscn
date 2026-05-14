@@ -95,4 +95,4 @@ generate_probes_subdiv = 4
 light_data = ExtResource("3_hmkmw")
 
 [node name="Player" parent="." unique_id=1754934297 instance=ExtResource("4_cjpbw")]
-transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -0.9738519, -0.4371106, -83.914566)
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -0.9738519, 0.041755676, -83.914566)

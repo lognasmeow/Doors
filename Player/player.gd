@@ -1,54 +1,91 @@
 extends CharacterBody3D
 
+@onready var head: Node3D = $Head
+@onready var camera: Camera3D = $Head/Camera3D
 
-const SPEED = 1.5
-#const JUMP_VELOCITY = 4.5
-const SPRINT_MULTIPLIER = 1
+@export var MOUSE_SENSITIVITY : float = 0.005
+var speed
+const WALK_SPEED : float = 1.5
+const SPRINT_SPEED : float = 3.0
+const JUMP_VELOCITY : float = 3.5
+const IN_AIR_CONTROL : float = 1.0
 
-@export var mouseSensitivity := 0.3
-var rotation_x := 0.0
-var rotation_y := 0.0
-var isSprinting: bool = false
+const BASE_FOV : float = 75.0
+const FOV_CHANGE : float = 1.5
+
+const BOB_FREQUENCY : float = 3.4
+const BOB_AMPLITUDE : float = 0.05
+var t_bob: float = 0.0
+
 
 func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
-func _physics_process(delta):
-	# Add the gravity
-	if not is_on_floor():
-		velocity += get_gravity() * delta
-
-	# Handle jump
-	#if Input.is_action_just_pressed("jump") and is_on_floor():
-		#velocity.y = JUMP_VELOCITY
-		
-	if Input.is_action_just_pressed("sprint"):
-		isSprinting = true
-
-	# Get the input direction and handle the movement/deceleration.
-	var input_dir = Input.get_vector("moveLeft", "moveRight", "moveForward", "moveBackward")
-	var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
-	
-	if input_dir.y >= 0 and isSprinting == true:
-		isSprinting = false
-		
-	var currentSpeed = SPEED * (SPRINT_MULTIPLIER if isSprinting else 1)
-	
-	if direction:
-		velocity.x = direction.x * currentSpeed
-		velocity.z = direction.z * currentSpeed
-	else:
-		velocity.x = move_toward(velocity.x, 0, currentSpeed)
-		velocity.z = move_toward(velocity.z, 0, currentSpeed)
-
-	move_and_slide()
-
 func _unhandled_input(event):
 	if event is InputEventMouseMotion:
-		rotation_y -= event.relative.x * mouseSensitivity
-		rotation_x -= event.relative.y * mouseSensitivity
+		head.rotate_y(-event.relative.x * MOUSE_SENSITIVITY)
+		camera.rotate_x(-event.relative.y * MOUSE_SENSITIVITY)
+		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-60), deg_to_rad(60))
+
+func _physics_process(delta):
+	if not is_on_floor():
+		velocity += get_gravity() * delta
+	
+	if Input.is_action_just_pressed("jump") and is_on_floor():
+		velocity.y = JUMP_VELOCITY
+	
+	handleMovement(delta)
+	handleCamerabob(delta)
+	camera.fov = setFov(delta)
+	move_and_slide()
+
+func handleMovement(delta):
+	handleSprint()
+	
+	var input_dir = Input.get_vector("moveLeft", "moveRight", "moveForward", "moveBackward")
+	var direction = (head.transform.basis * transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
+	if is_on_floor():
+		if direction:
+			velocity.x = direction.x * speed
+			velocity.z = direction.z * speed
+		else:
+			velocity.x = lerp(velocity.x, direction.x * speed, delta * 15.0)
+			velocity.z = lerp(velocity.z, direction.z * speed, delta * 15.0)
+	else:
+		velocity.x = lerp(velocity.x, direction.x * speed, delta * IN_AIR_CONTROL)
+		velocity.z = lerp(velocity.z, direction.z * speed, delta * IN_AIR_CONTROL)
 		
-		rotation_x = clamp(rotation_x, -70, 70)
+func handleSprint():
+	if Input.is_action_pressed("sprint"):
+		speed = SPRINT_SPEED
+	else:
+		speed = WALK_SPEED
 		
-		rotation_degrees.y = rotation_y
-		rotation_degrees.x = rotation_x
+func setFov(delta) -> float:
+	var velocityClamped = clamp(velocity.length(), 0.5, SPRINT_SPEED * 2)
+	var targetFov = BASE_FOV + FOV_CHANGE * velocityClamped
+	return lerp(camera.fov, targetFov, delta * 8.0)
+	
+func handleCamerabob(delta):
+	t_bob += delta * float(is_on_floor())
+	if velocity.is_zero_approx():
+		camera.transform.origin = getCamerabobPosition(t_bob, 0.01, 2.5, \
+															0.01, 1.5, \
+															0.03, 0.5)
+	elif velocity.length() > 0:
+		camera.transform.origin = getCamerabobPosition(t_bob, 0.04, 9.5, \
+															0.01, 6.0, \
+															0.04, 6.0)
+	elif velocity.length() >= SPRINT_SPEED:
+		camera.transform.origin = getCamerabobPosition(t_bob, 0.08, 18.0, \
+															0.01, 9.0, \
+															0.04, 7.0)
+	
+func getCamerabobPosition(time, pitchAmp: float, pitchFreq: float, \
+							yawAmp: float, yawFreq: float, \
+							rollAmp: float, rollFreq: float) -> Vector3:
+	var pos = Vector3.ZERO
+	pos.y = sin(time * pitchFreq) * pitchAmp
+	pos.x = sin(time * rollFreq) * rollAmp
+	pos.z = sin(time * yawFreq) * yawAmp
+	return pos
