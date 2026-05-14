@@ -1,3 +1,5 @@
 *** Shaders ***
 - https://godotshaders.com/shader/windows-3-1-vhs-shader/
 - https://godotshaders.com/shader/realistic-jpeg-artifacting/
+- https://godotshaders.com/shader/vhs-scanline-color-fuzz/
+- https://godotshaders.com/shader/vhs-post-processing/

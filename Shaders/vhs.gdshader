@@ -1,124 +1,50 @@
 shader_type canvas_item;
 
-uniform sampler2D SCREEN_TEXTURE : hint_screen_texture;
-uniform int quality : hint_range(1, 100) = 8;
-uniform int block_size : hint_range(2, 64, 2) = 8;
+uniform sampler2D screen_texture : hint_screen_texture, repeat_disable, filter_nearest_mipmap;
 
-// colorspace conversions
-vec3 rgb_to_ycbcr(vec3 c) {
-    float y =  0.299000 * c.r + 0.587000 * c.g + 0.114000 * c.b;
-    float cb = -0.168736 * c.r - 0.331264 * c.g + 0.500000 * c.b + 0.5;
-    float cr =  0.500000 * c.r - 0.418688 * c.g - 0.081312 * c.b + 0.5;
-    return vec3(y, cb, cr);
+group_uniforms scanline_wiggle;
+uniform float color_offset_multiplier: hint_range(0.0, 0.1) =  0.004;
+uniform float black_offset_multiplier: hint_range(0.0, 0.1) = 0.1;
+uniform float color_offset: hint_range(-0.1, 0.1) = 0.005;
+
+group_uniforms blur;
+uniform float blur_amount: hint_range(0.0, 3.0, 0.1);
+
+uniform sampler2D colorLookup;
+
+
+float noise(vec2 uv, float offset) {
+	return (fract(sin(dot(uv * offset, vec2(12.9898, 78.233))) * 43758.5453) - 0.5) * 2.0;
 }
 
-vec3 ycbcr_to_rgb(vec3 c) {
-    float y  = c.x;
-    float cb = c.y - 0.5;
-    float cr = c.z - 0.5;
-    float r = y + 1.402000 * cr;
-    float g = y - 0.344136 * cb - 0.714136 * cr;
-    float b = y + 1.772000 * cb;
-    return vec3(r, g, b);
+vec3 rgb_to_yuv(vec3 rgb) {
+	const mat3 RGB_TO_YUV = mat3(
+		vec3(0.299, 0.587, 0.114),
+		vec3(-0.14713, -0.28886, 0.436),
+		vec3(.615, -0.51499, -0.10001)
+		);
+	return rgb * RGB_TO_YUV;
+}
+
+vec3 yuv_to_rgb(vec3 yuv) {
+	const mat3 YUV_TO_RGB = mat3(
+		vec3(1.0, 0.0, 1.13983),
+		vec3(1.0, -0.39465, -0.58060),
+		vec3(1.0, 2.03211, 0.0)
+		);
+	return clamp(yuv * YUV_TO_RGB, vec3(0.0), vec3(1.0));
 }
 
 void fragment() {
-    const int N = 8; // dct size
-    // orthogonal dct basis, constants from https://patents.google.com/patent/CN100409693C/en
-    const float dct[64] = float[64](
-        0.353553,0.353553,0.353553,0.353553,0.353553,0.353553,0.353553,0.353553,
-        0.490393,0.415735,0.277785,0.0975452,-0.0975452,-0.277785,-0.415735,-0.490393,
-        0.46194,0.191342,-0.191342,-0.46194,-0.46194,-0.191342,0.191342,0.46194,
-        0.415735,-0.0975452,-0.490393,-0.277785,0.277785,0.490393,0.0975452,-0.415735,
-        0.353553,-0.353553,-0.353553,0.353553,0.353553,-0.353553,-0.353553,0.353553,
-        0.277785,-0.490393,0.0975452,0.415735,-0.415735,-0.0975452,0.490393,-0.277785,
-        0.191342,-0.46194,0.46194,-0.191342,-0.191342,0.46194,-0.46194,0.191342,
-        0.0975452,-0.277785,0.415735,-0.490393,0.490393,-0.415735,0.277785,-0.0975452
-    );
 
-    // flattened 8x8 buffers
-    vec3 block[64];
-    vec3 horiz[64];
-    vec3 vert[64];
-    vec3 inv_horiz[64];
-    vec3 inv_block[64];
+		float x_offset = color_offset + noise(vec2(floor(UV.y * 487.0), fract(UV.y * 487.0)), TIME) * color_offset_multiplier;
+		float black_offset = noise(vec2(floor(UV.y * 487.0), fract(UV.y * 487.0)), TIME + 69.420) * (black_offset_multiplier * 0.01);
 
-    // get viewport size from SCREEN_PIXEL_SIZE
-    vec2 viewport_size = 1.0 / SCREEN_PIXEL_SIZE;
+		COLOR = textureLod(screen_texture, SCREEN_UV + vec2(black_offset,0.0), 0.0);
 
-    // pixel coords
-    vec2 px_f = SCREEN_UV * viewport_size;
-    int px = int(floor(px_f.x));
-    int py = int(floor(px_f.y));
+		vec4 color2 = textureLod(screen_texture, SCREEN_UV + vec2(x_offset,0.0), blur_amount);
+		vec3 yuv1 = rgb_to_yuv(COLOR.rgb);
+		vec3 yuv2 = rgb_to_yuv(color2.rgb);
 
-    int bs = clamp(block_size, 1, 64);
-    int block_origin_x = (px / bs) * bs;
-    int block_origin_y = (py / bs) * bs;
-    int lid_x = px - block_origin_x;
-    int lid_y = py - block_origin_y;
-
-    for (int y = 0; y < N; y++) {
-        for (int x = 0; x < N; x++) {
-            float fx = (float(x) + 0.5) / float(N);
-            float fy = (float(y) + 0.5) / float(N);
-            int sample_x = block_origin_x + int(floor(fx * float(bs)));
-            int sample_y = block_origin_y + int(floor(fy * float(bs)));
-            sample_x = clamp(sample_x, 0, int(viewport_size.x) - 1);
-            sample_y = clamp(sample_y, 0, int(viewport_size.y) - 1);
-			vec2 uv = (vec2(float(sample_x), float(sample_y)) + vec2(0.5)) / viewport_size;
-            vec3 texc = texture(SCREEN_TEXTURE, uv).rgb;
-            block[y * N + x] = rgb_to_ycbcr(texc);
-        }
-    }
-
-    for (int y = 0; y < N; y++) {
-        for (int u = 0; u < N; u++) {
-            vec3 sum = vec3(0.0);
-            for (int x = 0; x < N; x++) {
-                sum += block[y * N + x] * dct[u * N + x];
-            }
-            horiz[y * N + u] = sum;
-        }
-    }
-
-    float qscale = max(1.0, float(quality));
-    for (int v = 0; v < N; v++) {
-        for (int u = 0; u < N; u++) {
-            vec3 sum = vec3(0.0);
-            for (int y = 0; y < N; y++) {
-                sum += horiz[y * N + u] * dct[v * N + y];
-            }
-            float q = qscale * float(u + v + 1);
-            vert[v * N + u] = round(sum * 128.0 / q) * (q / 128.0);
-        }
-    }
-
-    for (int v = 0; v < N; v++) {
-        for (int x = 0; x < N; x++) {
-            vec3 sum = vec3(0.0);
-            for (int u = 0; u < N; u++) {
-                sum += vert[v * N + u] * dct[u * N + x];
-            }
-            inv_horiz[v * N + x] = sum;
-        }
-    }
-
-    for (int y = 0; y < N; y++) {
-        for (int x = 0; x < N; x++) {
-            vec3 sum = vec3(0.0);
-            for (int v = 0; v < N; v++) {
-                sum += inv_horiz[v * N + x] * dct[v * N + y];
-            }
-            inv_block[y * N + x] = sum;
-        }
-    }
-
-    int pick_x = int(float(lid_x) * float(N) / float(bs));
-    int pick_y = int(float(lid_y) * float(N) / float(bs));
-    pick_x = clamp(pick_x, 0, N - 1);
-    pick_y = clamp(pick_y, 0, N - 1);
-
-    vec3 out_ycbcr = inv_block[pick_y * N + pick_x];
-    vec3 out_rgb = ycbcr_to_rgb(out_ycbcr);
-    COLOR = vec4(clamp(out_rgb, 0.0, 1.0), 1.0);
+		COLOR.rgb = yuv_to_rgb(vec3(yuv1.x, yuv2.yz));
 }

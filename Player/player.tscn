@@ -3,6 +3,8 @@
 [ext_resource type="Script" uid="uid://bnt0jwxox2gkf" path="res://Player/player.gd" id="1_l8h54"]
 [ext_resource type="Shader" uid="uid://cf543q665btgc" path="res://Shaders/vhs.gdshader" id="2_4ntmi"]
 [ext_resource type="Shader" uid="uid://bmpe4lx6c18m3" path="res://Shaders/vhs2.gdshader" id="3_btcbx"]
+[ext_resource type="Shader" uid="uid://dufltq7nulfh" path="res://Shaders/vhs3.gdshader" id="4_gwnis"]
+[ext_resource type="Shader" uid="uid://cvswe4t8x6l2p" path="res://Shaders/vhs4.gdshader" id="5_k53q1"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hvfyp"]
 radius = 0.2
@@ -10,14 +12,38 @@ height = 1.8
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_btcbx"]
 shader = ExtResource("2_4ntmi")
-shader_parameter/quality = 8
-shader_parameter/block_size = 8
+shader_parameter/color_offset_multiplier = 0.004
+shader_parameter/black_offset_multiplier = 0.0790000037525
+shader_parameter/color_offset = 0.005
+shader_parameter/blur_amount = 0.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_gwnis"]
 shader = ExtResource("3_btcbx")
-shader_parameter/virtual_resolution = Vector2(640, 480)
-shader_parameter/grid_strength = 0.15
-shader_parameter/grid_scale = 1.0
+shader_parameter/wiggle = 0.03
+shader_parameter/wiggle_speed = 25.0
+shader_parameter/smear = 0.1430000067925
+shader_parameter/blur_samples = 15
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_k53q1"]
+shader = ExtResource("4_gwnis")
+shader_parameter/quality = 2
+shader_parameter/block_size = 2
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fhl08"]
+shader = ExtResource("5_k53q1")
+shader_parameter/vhs_resolution = Vector2(640, 480)
+shader_parameter/samples = 4
+shader_parameter/crease_noise = 1.0
+shader_parameter/crease_opacity = 0.5
+shader_parameter/filter_intensity = 0.1
+shader_parameter/tape_crease_smear = 0.10000000149012
+shader_parameter/tape_crease_intensity = 0.10000000149012
+shader_parameter/tape_crease_jitter = 0.1
+shader_parameter/tape_crease_speed = 0.30000003427276
+shader_parameter/tape_crease_discoloration = 1.0
+shader_parameter/bottom_border_thickness = 6.0
+shader_parameter/bottom_border_jitter = 6.0
+shader_parameter/noise_intensity = 0.1
 
 [node name="Player" type="CharacterBody3D" unique_id=1754934297]
 script = ExtResource("1_l8h54")
@@ -26,20 +52,35 @@ script = ExtResource("1_l8h54")
 shape = SubResource("CapsuleShape3D_hvfyp")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1504478026]
-visible = false
 
 [node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=1732864954]
 material = SubResource("ShaderMaterial_btcbx")
-offset_right = 1440.0
-offset_bottom = 1080.0
+offset_right = 640.0
+offset_bottom = 480.0
 mouse_filter = 2
 
 [node name="CanvasLayer2" type="CanvasLayer" parent="." unique_id=1259053874]
 
 [node name="ColorRect2" type="ColorRect" parent="CanvasLayer2" unique_id=798288931]
 material = SubResource("ShaderMaterial_gwnis")
-offset_right = 1440.0
-offset_bottom = 1080.0
+offset_right = 640.0
+offset_bottom = 480.0
+mouse_filter = 2
+
+[node name="CanvasLayer3" type="CanvasLayer" parent="." unique_id=1535570922]
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer3" unique_id=1908353158]
+material = SubResource("ShaderMaterial_k53q1")
+offset_right = 640.0
+offset_bottom = 480.0
+mouse_filter = 2
+
+[node name="CanvasLayer4" type="CanvasLayer" parent="." unique_id=742914337]
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer4" unique_id=1329451449]
+material = SubResource("ShaderMaterial_fhl08")
+offset_right = 640.0
+offset_bottom = 480.0
 mouse_filter = 2
 
 [node name="Head" type="Node3D" parent="." unique_id=1365195114]
