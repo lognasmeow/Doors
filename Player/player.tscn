@@ -55,32 +55,32 @@ shape = SubResource("CapsuleShape3D_hvfyp")
 
 [node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=1732864954]
 material = SubResource("ShaderMaterial_btcbx")
-offset_right = 640.0
-offset_bottom = 480.0
+offset_right = 1024.0
+offset_bottom = 768.0
 mouse_filter = 2
 
 [node name="CanvasLayer2" type="CanvasLayer" parent="." unique_id=1259053874]
 
 [node name="ColorRect2" type="ColorRect" parent="CanvasLayer2" unique_id=798288931]
 material = SubResource("ShaderMaterial_gwnis")
-offset_right = 640.0
-offset_bottom = 480.0
+offset_right = 1024.0
+offset_bottom = 768.0
 mouse_filter = 2
 
 [node name="CanvasLayer3" type="CanvasLayer" parent="." unique_id=1535570922]
 
 [node name="ColorRect" type="ColorRect" parent="CanvasLayer3" unique_id=1908353158]
 material = SubResource("ShaderMaterial_k53q1")
-offset_right = 640.0
-offset_bottom = 480.0
+offset_right = 1024.0
+offset_bottom = 768.0
 mouse_filter = 2
 
 [node name="CanvasLayer4" type="CanvasLayer" parent="." unique_id=742914337]
 
 [node name="ColorRect" type="ColorRect" parent="CanvasLayer4" unique_id=1329451449]
 material = SubResource("ShaderMaterial_fhl08")
-offset_right = 640.0
-offset_bottom = 480.0
+offset_right = 1024.0
+offset_bottom = 768.0
 mouse_filter = 2
 
 [node name="Head" type="Node3D" parent="." unique_id=1365195114]
