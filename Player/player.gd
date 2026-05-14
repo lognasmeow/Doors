@@ -6,7 +6,7 @@ extends CharacterBody3D
 @export var MOUSE_SENSITIVITY : float = 0.005
 var speed
 const WALK_SPEED : float = 1.5
-const SPRINT_SPEED : float = 3.0
+const SPRINT_SPEED : float = 5.0
 const JUMP_VELOCITY : float = 3.5
 const IN_AIR_CONTROL : float = 1.0
 
@@ -72,14 +72,14 @@ func handleCamerabob(delta):
 		camera.transform.origin = getCamerabobPosition(t_bob, 0.01, 2.5, \
 															0.01, 1.5, \
 															0.03, 0.5)
+	elif velocity.length() > WALK_SPEED + 0.5:
+		camera.transform.origin = getCamerabobPosition(t_bob, 0.12, 15.0, \
+															0.01, 9.0, \
+															0.08, 12.0)
 	elif velocity.length() > 0:
 		camera.transform.origin = getCamerabobPosition(t_bob, 0.04, 9.5, \
 															0.01, 6.0, \
 															0.04, 6.0)
-	elif velocity.length() >= SPRINT_SPEED:
-		camera.transform.origin = getCamerabobPosition(t_bob, 0.08, 18.0, \
-															0.01, 9.0, \
-															0.04, 7.0)
 	
 func getCamerabobPosition(time, pitchAmp: float, pitchFreq: float, \
 							yawAmp: float, yawFreq: float, \
