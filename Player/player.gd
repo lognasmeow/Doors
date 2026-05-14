@@ -4,7 +4,7 @@ extends CharacterBody3D
 @onready var camera: Camera3D = $Head/Camera3D
 
 @export var MOUSE_SENSITIVITY : float = 0.005
-var speed
+var speed: float
 const WALK_SPEED : float = 1.5
 const SPRINT_SPEED : float = 5.0
 const JUMP_VELOCITY : float = 3.5
@@ -66,21 +66,26 @@ func setFov(delta) -> float:
 	var targetFov = BASE_FOV + FOV_CHANGE * velocityClamped
 	return lerp(camera.fov, targetFov, delta * 8.0)
 	
+var bob_strength := 0.0
+var target_strength := 0.0
+
 func handleCamerabob(delta):
 	t_bob += delta * float(is_on_floor())
+
+	var idle := getCamerabobPosition(t_bob, 0.01, 2.5, 0.01, 1.5, 0.03, 0.5)
+	var walk := getCamerabobPosition(t_bob, 0.04, 9.5, 0.01, 6.0, 0.04, 6.0)
+	var run  := getCamerabobPosition(t_bob, 0.16, 15.0, 0.01, 9.0, 0.1, 12.0)
+
+	var target: Vector3
 	if velocity.is_zero_approx():
-		camera.transform.origin = getCamerabobPosition(t_bob, 0.01, 2.5, \
-															0.01, 1.5, \
-															0.03, 0.5)
-	elif velocity.length() > WALK_SPEED + 0.5:
-		camera.transform.origin = getCamerabobPosition(t_bob, 0.12, 15.0, \
-															0.01, 9.0, \
-															0.08, 12.0)
-	elif velocity.length() > 0:
-		camera.transform.origin = getCamerabobPosition(t_bob, 0.04, 9.5, \
-															0.01, 6.0, \
-															0.04, 6.0)
-	
+		target = idle
+	elif speed > WALK_SPEED + 0.5:
+		target = run
+	else:
+		target = walk
+
+	camera.transform.origin = camera.transform.origin.lerp(target, delta * 15.0)
+
 func getCamerabobPosition(time, pitchAmp: float, pitchFreq: float, \
 							yawAmp: float, yawFreq: float, \
 							rollAmp: float, rollFreq: float) -> Vector3:
