@@ -17,15 +17,22 @@ const BOB_FREQUENCY : float = 3.4
 const BOB_AMPLITUDE : float = 0.05
 var t_bob: float = 0.0
 
+const HEAD_TILT_WEIGHT: float = 4.0
+const HEAD_Z_MAX_ROTATION: float = deg_to_rad(50.0)
+var _prev_head_rotation_y: float = 0.0
+
 
 func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 func _unhandled_input(event):
 	if event is InputEventMouseMotion:
-		head.rotate_y(-event.relative.x * MOUSE_SENSITIVITY)
-		camera.rotate_x(-event.relative.y * MOUSE_SENSITIVITY)
-		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-60), deg_to_rad(60))
+		handleCameraMovement(event)
+
+func handleCameraMovement(event):
+	head.rotate_y(-event.relative.x * MOUSE_SENSITIVITY)
+	camera.rotate_x(-event.relative.y * MOUSE_SENSITIVITY)
+	camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-60), deg_to_rad(60))
 
 func _physics_process(delta):
 	if not is_on_floor():
@@ -36,6 +43,7 @@ func _physics_process(delta):
 	
 	handleMovement(delta)
 	handleCamerabob(delta)
+	handleCameraTilt(delta)
 	camera.fov = setFov(delta)
 	move_and_slide()
 
@@ -94,3 +102,14 @@ func getCamerabobPosition(time, pitchAmp: float, pitchFreq: float, \
 	pos.x = sin(time * rollFreq) * rollAmp
 	pos.z = sin(time * yawFreq) * yawAmp
 	return pos
+	
+func handleCameraTilt(delta: float) -> void:
+	var rotation_delta: float = angle_difference(_prev_head_rotation_y, head.rotation.y)
+
+	var tilt_target: float = 0.0
+	if abs(rotation_delta) > 0.0001:
+		var tilt_strength: float = clampf(abs(rotation_delta) * HEAD_TILT_WEIGHT, 0.0, 1.0)
+		tilt_target = sign(rotation_delta) * HEAD_Z_MAX_ROTATION * tilt_strength
+
+	head.rotation.z = lerpf(head.rotation.z, tilt_target, delta * HEAD_TILT_WEIGHT)
+	_prev_head_rotation_y = head.rotation.y
