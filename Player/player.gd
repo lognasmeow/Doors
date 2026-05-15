@@ -18,7 +18,7 @@ const BOB_AMPLITUDE : float = 0.05
 var t_bob: float = 0.0
 
 const HEAD_TILT_WEIGHT: float = 4.0
-const HEAD_Z_MAX_ROTATION: float = deg_to_rad(50.0)
+const HEAD_Z_MAX_ROTATION: float = deg_to_rad(30.0)
 var _prev_head_rotation_y: float = 0.0
 
 
@@ -80,7 +80,7 @@ var target_strength := 0.0
 func handleCamerabob(delta):
 	t_bob += delta * float(is_on_floor())
 
-	var idle := getCamerabobPosition(t_bob, 0.01, 2.5, 0.01, 1.5, 0.03, 0.5)
+	var idle := getCamerabobPosition(t_bob, 0.015, 2.5, 0.01, 1.5, 0.03, 0.5)
 	var walk := getCamerabobPosition(t_bob, 0.04, 9.5, 0.01, 6.0, 0.04, 6.0)
 	var run  := getCamerabobPosition(t_bob, 0.16, 15.0, 0.01, 9.0, 0.1, 12.0)
 
