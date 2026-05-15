@@ -6,4 +6,3 @@
 
 *** Post Processing ***
 - sphynx-owner
-- sebashtioon
