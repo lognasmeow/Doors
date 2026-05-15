@@ -82,7 +82,7 @@ func handleCamerabob(delta):
 
 	var idle := getCamerabobPosition(t_bob, 0.015, 2.5, 0.01, 1.5, 0.03, 0.5)
 	var walk := getCamerabobPosition(t_bob, 0.04, 9.5, 0.01, 6.0, 0.04, 6.0)
-	var run  := getCamerabobPosition(t_bob, 0.16, 15.0, 0.01, 9.0, 0.1, 12.0)
+	var run  := getCamerabobPosition(t_bob, 0.16, 17.0, 0.01, 9.0, 0.1, 14.0)
 
 	var target: Vector3
 	if velocity.is_zero_approx():
