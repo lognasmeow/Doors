@@ -2,8 +2,15 @@
 
 [ext_resource type="PackedScene" uid="uid://dkml2o44cwqtm" path="res://Lighting/LightBulb/LightBulb.tscn" id="1_7a1c7"]
 [ext_resource type="PackedScene" uid="uid://d18vf8p7c7u1q" path="res://Maps/Hall/Models/hall.tscn" id="1_sm620"]
+[ext_resource type="Resource" uid="uid://ca45noqewsyvp" path="res://addons/sphynx_motion_blur_toolkit/guertin/shader_stages/guertin_blur_stage.tres" id="1_ykxu7"]
+[ext_resource type="Resource" uid="uid://cvb65hfs2lrxo" path="res://addons/sphynx_motion_blur_toolkit/guertin/shader_stages/guertin_neighbor_max_stage.tres" id="2_yeaeu"]
 [ext_resource type="LightmapGIData" uid="uid://cioge3sm2sx3e" path="res://Maps/Hall/MapHall.lmbake" id="3_hmkmw"]
+[ext_resource type="Resource" uid="uid://bidsfymvdyhek" path="res://addons/sphynx_motion_blur_toolkit/guertin/shader_stages/guertin_overlay_stage.tres" id="3_t8hfi"]
 [ext_resource type="PackedScene" uid="uid://3vgkium50w67" path="res://Player/player.tscn" id="4_cjpbw"]
+[ext_resource type="Resource" uid="uid://c8ulad7utgrg7" path="res://addons/sphynx_motion_blur_toolkit/pre_blur_processing/shader_stages/pre_blur_processing_stage.tres" id="4_setpy"]
+[ext_resource type="Script" uid="uid://c5jewnyvlca7j" path="res://addons/sphynx_motion_blur_toolkit/guertin/guertin_motion_blur.gd" id="5_bc52x"]
+[ext_resource type="Resource" uid="uid://dipvwksvqb3dm" path="res://addons/sphynx_motion_blur_toolkit/guertin/shader_stages/guertin_tile_max_x_stage.tres" id="6_dhmor"]
+[ext_resource type="Resource" uid="uid://bxfg45ubc2pv7" path="res://addons/sphynx_motion_blur_toolkit/guertin/shader_stages/guertin_tile_max_y_stage.tres" id="7_1caxb"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sm620"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -34,10 +41,30 @@ adjustment_enabled = true
 adjustment_contrast = 1.25
 adjustment_saturation = 0.7
 
+[sub_resource type="CompositorEffect" id="CompositorEffect_q80gh"]
+resource_local_to_scene = false
+resource_name = ""
+enabled = true
+effect_callback_type = 4
+needs_motion_vectors = true
+needs_normal_roughness = false
+script = ExtResource("5_bc52x")
+shader_stages/blur_stage = ExtResource("1_ykxu7")
+shader_stages/overlay_stage = ExtResource("3_t8hfi")
+shader_stages/tile_max_x_stage = ExtResource("6_dhmor")
+shader_stages/tile_max_y_stage = ExtResource("7_1caxb")
+shader_stages/neighbor_max_stage = ExtResource("2_yeaeu")
+shader_stages/pre_blur_processor_stage = ExtResource("4_setpy")
+metadata/_custom_type_script = "uid://c5jewnyvlca7j"
+
+[sub_resource type="Compositor" id="Compositor_40meb"]
+compositor_effects = Array[CompositorEffect]([SubResource("CompositorEffect_q80gh")])
+
 [node name="Node3D" type="Node3D" unique_id=1358751029]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1437628421]
 environment = SubResource("Environment_hmkmw")
+compositor = SubResource("Compositor_40meb")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1719266925]
 transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
