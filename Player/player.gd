@@ -29,11 +29,6 @@ func _unhandled_input(event):
 	if event is InputEventMouseMotion:
 		handleCameraMovement(event)
 
-func handleCameraMovement(event):
-	head.rotate_y(-event.relative.x * MOUSE_SENSITIVITY)
-	camera.rotate_x(-event.relative.y * MOUSE_SENSITIVITY)
-	camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-60), deg_to_rad(60))
-
 func _physics_process(delta):
 	if not is_on_floor():
 		velocity += get_gravity() * delta
@@ -47,6 +42,7 @@ func _physics_process(delta):
 	camera.fov = setFov(delta)
 	move_and_slide()
 
+#region Movement
 func handleMovement(delta):
 	handleSprint()
 	
@@ -74,9 +70,13 @@ func setFov(delta) -> float:
 	var targetFov = BASE_FOV + FOV_CHANGE * velocityClamped
 	return lerp(camera.fov, targetFov, delta * 8.0)
 	
-var bob_strength := 0.0
-var target_strength := 0.0
+func handleCameraMovement(event):
+	head.rotate_y(-event.relative.x * MOUSE_SENSITIVITY)
+	camera.rotate_x(-event.relative.y * MOUSE_SENSITIVITY)
+	camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-60), deg_to_rad(60))
+#endregion
 
+#region CameraBob
 func handleCamerabob(delta):
 	t_bob += delta * float(is_on_floor())
 
@@ -113,3 +113,4 @@ func handleCameraTilt(delta: float) -> void:
 
 	head.rotation.z = lerpf(head.rotation.z, tilt_target, delta * HEAD_TILT_WEIGHT)
 	_prev_head_rotation_y = head.rotation.y
+#endregion
