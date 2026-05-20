@@ -9,6 +9,8 @@
 
 [node name="Node3D" type="Node3D" unique_id=1358751029]
 
+[node name="Hall" parent="." unique_id=1517047227 instance=ExtResource("1_sm620")]
+
 [node name="Lighting" type="Node3D" parent="." unique_id=116918586]
 
 [node name="OmniLight3D" parent="Lighting" unique_id=350247279 instance=ExtResource("1_7a1c7")]
@@ -53,8 +55,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5462776, -0.023430593, -80
 [node name="SpotLight3D" type="SpotLight3D" parent="Lighting" unique_id=744558309]
 transform = Transform3D(-1, 1.0873268e-07, 0, 4.7528565e-15, 4.371139e-08, 1, 1.0873268e-07, 1, -4.371139e-08, -1.0684768, 1.1905605, 2.0745792)
 light_color = Color(0.6743888, 0.6743912, 0.6789077, 1)
-
-[node name="Hall" parent="." unique_id=1517047227 instance=ExtResource("1_sm620")]
 
 [node name="Player" parent="." unique_id=1754934297 instance=ExtResource("4_cjpbw")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -0.9738519, 0.041755676, -83.914566)
