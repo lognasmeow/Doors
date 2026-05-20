@@ -1,0 +1,62 @@
+[gd_scene format=3 uid="uid://dhpiam784llvc"]
+
+[ext_resource type="Resource" uid="uid://ca45noqewsyvp" path="res://addons/sphynx_motion_blur_toolkit/guertin/shader_stages/guertin_blur_stage.tres" id="1_85wok"]
+[ext_resource type="Resource" uid="uid://cvb65hfs2lrxo" path="res://addons/sphynx_motion_blur_toolkit/guertin/shader_stages/guertin_neighbor_max_stage.tres" id="2_mi8ug"]
+[ext_resource type="Resource" uid="uid://bidsfymvdyhek" path="res://addons/sphynx_motion_blur_toolkit/guertin/shader_stages/guertin_overlay_stage.tres" id="3_kkeet"]
+[ext_resource type="Resource" uid="uid://c8ulad7utgrg7" path="res://addons/sphynx_motion_blur_toolkit/pre_blur_processing/shader_stages/pre_blur_processing_stage.tres" id="4_3x8bk"]
+[ext_resource type="Script" uid="uid://c5jewnyvlca7j" path="res://addons/sphynx_motion_blur_toolkit/guertin/guertin_motion_blur.gd" id="5_8b4av"]
+[ext_resource type="Resource" uid="uid://dipvwksvqb3dm" path="res://addons/sphynx_motion_blur_toolkit/guertin/shader_stages/guertin_tile_max_x_stage.tres" id="6_ojbr3"]
+[ext_resource type="Resource" uid="uid://bxfg45ubc2pv7" path="res://addons/sphynx_motion_blur_toolkit/guertin/shader_stages/guertin_tile_max_y_stage.tres" id="7_8ofp8"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sm620"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_7a1c7"]
+sky_material = SubResource("ProceduralSkyMaterial_sm620")
+
+[sub_resource type="Environment" id="Environment_hmkmw"]
+background_mode = 1
+sky = SubResource("Sky_7a1c7")
+tonemap_mode = 2
+tonemap_exposure = 1.22
+ssao_enabled = true
+ssao_intensity = 7.69
+glow_enabled = true
+glow_levels/2 = 1.0
+glow_levels/4 = 0.5
+glow_levels/5 = 0.2
+glow_intensity = 0.61
+glow_bloom = 0.4
+fog_depth_begin = 0.0
+fog_depth_end = 15.0
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.08
+volumetric_fog_albedo = Color(0.8346143, 0.8346143, 0.8346143, 1)
+adjustment_enabled = true
+adjustment_contrast = 1.25
+adjustment_saturation = 0.7
+
+[sub_resource type="CompositorEffect" id="CompositorEffect_q80gh"]
+resource_local_to_scene = false
+resource_name = ""
+enabled = true
+effect_callback_type = 4
+needs_motion_vectors = true
+needs_normal_roughness = false
+script = ExtResource("5_8b4av")
+intensity = 0.5
+shader_stages/blur_stage = ExtResource("1_85wok")
+shader_stages/overlay_stage = ExtResource("3_kkeet")
+shader_stages/tile_max_x_stage = ExtResource("6_ojbr3")
+shader_stages/tile_max_y_stage = ExtResource("7_8ofp8")
+shader_stages/neighbor_max_stage = ExtResource("2_mi8ug")
+shader_stages/pre_blur_processor_stage = ExtResource("4_3x8bk")
+metadata/_custom_type_script = "uid://c5jewnyvlca7j"
+
+[sub_resource type="Compositor" id="Compositor_40meb"]
+compositor_effects = Array[CompositorEffect]([SubResource("CompositorEffect_q80gh")])
+
+[node name="WorldEnvironment" type="WorldEnvironment" unique_id=1617561290]
+environment = SubResource("Environment_hmkmw")
+compositor = SubResource("Compositor_40meb")
